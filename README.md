@@ -72,7 +72,7 @@ If you are unsure about legality in your jurisdiction, consult a legal professio
 ### Server
 - **OS:** Linux (Ubuntu LTS recommended)
 - **iSCSI Target:** LIO (`targetcli`)
-- **Backend:** .NET 8 (ASP.NET Core)
+- **Backend:** .NET 10 (ASP.NET Core)
 - **Database:** PostgreSQL
 - **Storage:** Raw DVD images (`.raw`)
 
