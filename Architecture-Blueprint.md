@@ -23,6 +23,7 @@ Rel(system, db, "Reads/Writes metadata")
 
 @enduml
 ```
+<img width="429" height="544" alt="image" src="https://github.com/user-attachments/assets/7bdc6a13-292b-41c1-951e-b745b8e942fc" />
 
 ------------------------------------------------------------------------
 
@@ -51,6 +52,7 @@ Rel(api, linux, "Shell / Abstraction Layer")
 
 @enduml
 ```
+<img width="450" height="764" alt="image" src="https://github.com/user-attachments/assets/f518bb6d-1a3a-4b74-8865-cd37558d6c81" />
 
 ------------------------------------------------------------------------
 
