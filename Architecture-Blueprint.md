@@ -73,6 +73,7 @@ Rel(application, infra, "Uses via interfaces")
 
 @enduml
 ```
+<img width="501" height="375" alt="image" src="https://github.com/user-attachments/assets/6c993299-3276-466d-9468-b12216491c20" />
 
 ------------------------------------------------------------------------
 
