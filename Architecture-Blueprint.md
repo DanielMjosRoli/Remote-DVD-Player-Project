@@ -199,6 +199,197 @@ Movie ||--o{ Rating
 ```
 <img width="1081" height="499" alt="image" src="https://github.com/user-attachments/assets/7aa3f453-8d71-42ea-8801-a7a19e4151ed" />
 
+``` SQL
+BEGIN;
+
+-- ========================================
+-- Enable UUID support
+-- ========================================
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+-- ========================================
+-- USERS
+-- ========================================
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    username TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    role TEXT NOT NULL DEFAULT 'User',
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    last_login_at TIMESTAMP
+);
+
+-- ========================================
+-- MOVIES
+-- ========================================
+CREATE TABLE movies (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title TEXT NOT NULL,
+    original_title TEXT,
+    description TEXT,
+    release_year INT,
+    duration_minutes INT,
+    age_rating TEXT,
+    poster_path TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_movies_title ON movies(title);
+
+-- ========================================
+-- STORAGE VOLUMES
+-- ========================================
+CREATE TABLE storage_volumes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL,
+    mount_path TEXT NOT NULL,
+    type TEXT NOT NULL, -- Local, iSCSI, NAS
+    capacity_bytes BIGINT,
+    available_bytes BIGINT,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- ========================================
+-- GENRES
+-- ========================================
+CREATE TABLE genres (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL UNIQUE
+);
+
+-- ========================================
+-- COLLECTIONS
+-- ========================================
+CREATE TABLE collections (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL,
+    description TEXT
+);
+
+-- ========================================
+-- MEDIA FILES
+-- ========================================
+CREATE TABLE media_files (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    movie_id UUID NOT NULL,
+    storage_volume_id UUID NOT NULL,
+    file_path TEXT NOT NULL,
+    file_size_bytes BIGINT NOT NULL,
+    checksum TEXT,
+    container_format TEXT,
+    resolution TEXT,
+    audio_format TEXT,
+    subtitle_languages TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT fk_media_movie
+        FOREIGN KEY(movie_id)
+        REFERENCES movies(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_media_storage
+        FOREIGN KEY(storage_volume_id)
+        REFERENCES storage_volumes(id)
+        ON DELETE RESTRICT
+);
+
+CREATE INDEX idx_media_movie ON media_files(movie_id);
+CREATE INDEX idx_media_checksum ON media_files(checksum);
+CREATE INDEX idx_media_storage_volume ON media_files(storage_volume_id);
+
+-- ========================================
+-- MOVIE <-> GENRE (M:N)
+-- ========================================
+CREATE TABLE movie_genres (
+    movie_id UUID NOT NULL,
+    genre_id UUID NOT NULL,
+
+    PRIMARY KEY (movie_id, genre_id),
+
+    CONSTRAINT fk_mg_movie
+        FOREIGN KEY(movie_id)
+        REFERENCES movies(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_mg_genre
+        FOREIGN KEY(genre_id)
+        REFERENCES genres(id)
+        ON DELETE CASCADE
+);
+
+-- ========================================
+-- COLLECTION <-> MOVIE (M:N)
+-- ========================================
+CREATE TABLE collection_movies (
+    collection_id UUID NOT NULL,
+    movie_id UUID NOT NULL,
+
+    PRIMARY KEY (collection_id, movie_id),
+
+    CONSTRAINT fk_cm_collection
+        FOREIGN KEY(collection_id)
+        REFERENCES collections(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_cm_movie
+        FOREIGN KEY(movie_id)
+        REFERENCES movies(id)
+        ON DELETE CASCADE
+);
+
+-- ========================================
+-- WATCH HISTORY
+-- ========================================
+CREATE TABLE watch_history (
+    user_id UUID NOT NULL,
+    movie_id UUID NOT NULL,
+    last_position_seconds INT NOT NULL DEFAULT 0,
+    completed BOOLEAN NOT NULL DEFAULT FALSE,
+    last_watched_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+    PRIMARY KEY (user_id, movie_id),
+
+    CONSTRAINT fk_wh_user
+        FOREIGN KEY(user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_wh_movie
+        FOREIGN KEY(movie_id)
+        REFERENCES movies(id)
+        ON DELETE CASCADE
+);
+
+CREATE INDEX idx_watchhistory_user ON watch_history(user_id);
+
+-- ========================================
+-- RATINGS
+-- ========================================
+CREATE TABLE ratings (
+    user_id UUID NOT NULL,
+    movie_id UUID NOT NULL,
+    rating_value INT NOT NULL CHECK (rating_value BETWEEN 1 AND 5),
+    rated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+    PRIMARY KEY (user_id, movie_id),
+
+    CONSTRAINT fk_rating_user
+        FOREIGN KEY(user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_rating_movie
+        FOREIGN KEY(movie_id)
+        REFERENCES movies(id)
+        ON DELETE CASCADE
+);
+
+CREATE INDEX idx_ratings_movie ON ratings(movie_id);
+
+COMMIT;
+```
+
 
 ------------------------------------------------------------------------
 
