@@ -79,6 +79,129 @@ Rel(application, infra, "Uses via interfaces")
 
 ------------------------------------------------------------------------
 
+# 4. DB Model
+``` planuml
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity User {
+  +Id : UUID <<PK>>
+  --
+  Username : string <<UNIQUE>>
+  Email : string
+  PasswordHash : string
+  Role : string
+  CreatedAt : datetime
+  LastLoginAt : datetime
+}
+
+entity Movie {
+  +Id : UUID <<PK>>
+  --
+  Title : string
+  OriginalTitle : string
+  Description : text
+  ReleaseYear : int
+  DurationMinutes : int
+  AgeRating : string
+  PosterPath : string
+  CreatedAt : datetime
+  UpdatedAt : datetime
+}
+
+entity MediaFile {
+  +Id : UUID <<PK>>
+  --
+  MovieId : UUID <<FK>>
+  StorageVolumeId : UUID <<FK>>
+  FilePath : string
+  FileSizeBytes : long
+  Checksum : string
+  ContainerFormat : string
+  Resolution : string
+  AudioFormat : string
+  SubtitleLanguages : string
+  CreatedAt : datetime
+}
+
+entity StorageVolume {
+  +Id : UUID <<PK>>
+  --
+  Name : string
+  MountPath : string
+  Type : string
+  CapacityBytes : long
+  AvailableBytes : long
+  CreatedAt : datetime
+}
+
+entity Genre {
+  +Id : UUID <<PK>>
+  --
+  Name : string <<UNIQUE>>
+}
+
+entity MovieGenre {
+  +MovieId : UUID <<FK>>
+  +GenreId : UUID <<FK>>
+}
+
+entity Collection {
+  +Id : UUID <<PK>>
+  --
+  Name : string
+  Description : text
+}
+
+entity CollectionMovie {
+  +CollectionId : UUID <<FK>>
+  +MovieId : UUID <<FK>>
+}
+
+entity WatchHistory {
+  +UserId : UUID <<FK>>
+  +MovieId : UUID <<FK>>
+  --
+  LastPositionSeconds : int
+  Completed : boolean
+  LastWatchedAt : datetime
+}
+
+entity Rating {
+  +UserId : UUID <<FK>>
+  +MovieId : UUID <<FK>>
+  --
+  RatingValue : int
+  RatedAt : datetime
+}
+
+' =========================
+' Relationships
+' =========================
+
+Movie ||--o{ MediaFile
+StorageVolume ||--o{ MediaFile
+
+Movie ||--o{ MovieGenre
+Genre ||--o{ MovieGenre
+
+Movie ||--o{ CollectionMovie
+Collection ||--o{ CollectionMovie
+
+User ||--o{ WatchHistory
+Movie ||--o{ WatchHistory
+
+User ||--o{ Rating
+Movie ||--o{ Rating
+
+@enduml
+```
+<img width="1081" height="499" alt="image" src="https://github.com/user-attachments/assets/7aa3f453-8d71-42ea-8801-a7a19e4151ed" />
+
+
+------------------------------------------------------------------------
+
 # Architectural Principles
 
 -   Clean Architecture
