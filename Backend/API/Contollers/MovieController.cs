@@ -13,7 +13,7 @@ public class MoviesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<PagedResult<Movie>>> GetAll(
+    public async Task<ActionResult<PagedResult<MovieDTO>>> GetAll(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20)
     {
@@ -27,9 +27,26 @@ public class MoviesController : ControllerBase
             .OrderBy(m => m.Title)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
+            .Select(m => new MovieDTO(
+                m.Id,
+                m.Title,
+                m.OriginalTitle,
+                m.Description,
+                m.ReleaseYear,
+                m.DurationMinutes,
+                m.AgeRating,
+                m.PosterPath,
+                m.UpdatedAt,
+                m.Genres
+                    .Select(mg => new GenreDTO(
+                        mg.GenreId,
+                        mg.Genre.Name
+                    ))
+                    .ToList()
+            ))
             .ToListAsync();
 
-        return Ok(new PagedResult<Movie>(items, totalCount, page, pageSize));
+        return Ok(new PagedResult<MovieDTO>(items, totalCount, page, pageSize));
     }
 
     [HttpGet("{id:guid}")]
