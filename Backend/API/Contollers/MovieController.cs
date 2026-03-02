@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 
 [ApiController]
 [Route("movies")]
@@ -50,11 +51,28 @@ public class MoviesController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<Movie>> Get(Guid id)
+    public async Task<ActionResult<MovieDTO>> Get(Guid id)
     {
         var movie = await _context.Movies
-            .Include(m => m.MediaFiles)
-            .FirstOrDefaultAsync(m => m.Id == id);
+            .Where(m => m.Id == id)
+            .Select(m => new MovieDTO(
+                m.Id,
+                m.Title,
+                m.OriginalTitle,
+                m.Description,
+                m.ReleaseYear,
+                m.DurationMinutes,
+                m.AgeRating,
+                m.PosterPath,
+                m.UpdatedAt,
+                m.Genres
+                    .Select(mg => new GenreDTO(
+                        mg.GenreId,
+                        mg.Genre.Name
+                    ))
+                    .ToList()
+            ))
+            .FirstOrDefaultAsync();
 
         if (movie is null)
             return NotFound();
@@ -63,8 +81,18 @@ public class MoviesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(Movie movie)
+    public async Task<ActionResult<MovieDTO>> Create(MovieDTO moviedto)
     {
+        var movie = new Movie
+        (
+            moviedto.Title,
+            moviedto.OriginalTitle,
+            moviedto.Description,
+            moviedto.ReleaseYear,
+            moviedto.DurationMinutes,
+            moviedto.AgeRating,
+            moviedto.PosterPath
+        );
         _context.Movies.Add(movie);
         await _context.SaveChangesAsync();
 
@@ -72,7 +100,7 @@ public class MoviesController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<ActionResult<MovieDTO>> Delete(Guid id)
     {
         var movie = await _context.Movies.FindAsync(id);
         if (movie is null)

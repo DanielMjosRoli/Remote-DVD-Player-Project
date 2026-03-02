@@ -19,4 +19,31 @@ public class Movie
     public ICollection<MovieGenre> Genres { get; private set; } = new List<MovieGenre>();
     public ICollection<CollectionMovie> Collections { get; private set; } = new List<CollectionMovie>();
     public ICollection<Rating> Ratings { get; private set; } = new List<Rating>();
+
+    private Movie() {}
+
+    public Movie(
+        string title,
+        string? originalTitle,
+        string? description,
+        int? releaseYear,
+        int? durationMinutes,
+        string? ageRating,
+        string? posterPath)
+    {
+        if (string.IsNullOrWhiteSpace(title))
+            throw new ArgumentException("Title is required", nameof(title));
+
+        Id = Guid.NewGuid();
+        Title = title;
+        OriginalTitle = originalTitle;
+        Description = description;
+        ReleaseYear = releaseYear;
+        DurationMinutes = durationMinutes;
+        AgeRating = ageRating;
+        PosterPath = posterPath;
+
+        CreatedAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
+    }
 }
