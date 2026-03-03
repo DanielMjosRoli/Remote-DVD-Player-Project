@@ -1,7 +1,5 @@
-public record CollectionDTO(
+public record GenreViewDTO(
     Guid Id,
     string Name,
-    string Description,
     IReadOnlyList<MovieDTO> Movies
-
 );
