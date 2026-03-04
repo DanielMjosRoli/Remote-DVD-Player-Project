@@ -51,11 +51,11 @@ public class MoviesController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<MovieDTO>> Get(Guid id)
+    public async Task<ActionResult<MoviePageDTO>> Get(Guid id)
     {
         var movie = await _context.Movies
             .Where(m => m.Id == id)
-            .Select(m => new MovieDTO(
+            .Select(m => new MoviePageDTO(
                 m.Id,
                 m.Title,
                 m.OriginalTitle,
@@ -65,6 +65,19 @@ public class MoviesController : ControllerBase
                 m.AgeRating,
                 m.PosterPath,
                 m.UpdatedAt,
+                m.MediaFiles
+                    .Select(mf => new MediaFilesDTO(
+                        mf.Id,
+                        mf.StorageVolumeId,
+                        mf.FilePath,
+                        mf.FileSizeBytes,
+                        mf.Checksum,
+                        mf.ContainerFormat,
+                        mf.Resolution,
+                        mf.AudioFormat,
+                        mf.SubtitleLanguages,
+                        mf.CreatedAt
+                    )).ToList(),
                 m.Genres
                     .Select(mg => new GenreDTO(
                         mg.GenreId,
