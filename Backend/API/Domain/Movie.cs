@@ -46,4 +46,7 @@ public class Movie
         CreatedAt = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
     }
+    public void AddGenre(MovieGenre mg){
+        Genres.Add(mg);
+    }
 }

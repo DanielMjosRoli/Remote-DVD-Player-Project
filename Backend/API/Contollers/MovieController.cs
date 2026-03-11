@@ -96,7 +96,7 @@ public class MoviesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<MovieDTO>> Create(MovieDTO moviedto)
     {
-        var movie = new Movie
+        Movie movie = new Movie
         (
             moviedto.Title,
             moviedto.OriginalTitle,
@@ -107,9 +107,26 @@ public class MoviesController : ControllerBase
             moviedto.PosterPath
         );
         _context.Movies.Add(movie);
+        // Add genres
+        foreach (GenreDTO genreDto in moviedto.Genres)
+        {
+            movie.AddGenre(new MovieGenre(moviedto.Id, genreDto.Id));
+            //movie.Genres.Add(new MovieGenre(moviedto.Id, genreDto.Id));
+        }
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(Get), new { id = movie.Id }, movie);
+        return CreatedAtAction(nameof(Get), new { id = movie.Id }, new MovieDTO(
+            movie.Id,
+            movie.Title,
+            movie.OriginalTitle,
+            movie.Description,
+            movie.ReleaseYear,
+            movie.DurationMinutes,
+            movie.AgeRating,
+            movie.PosterPath,
+            movie.UpdatedAt,
+            []
+        ));
     }
 
     [HttpDelete("{id:guid}")]

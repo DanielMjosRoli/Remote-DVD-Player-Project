@@ -16,10 +16,10 @@ export function FrontPage() {
     loadMovies(1);
     }, []);
     return(
-        <>
-            {movies.map((m) =>{
-                return(<Card key={m.id} movie={m}></Card>)
-            })}
-        </>
+        <div className="p-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+            {movies.map((m) => (
+                <Card key={m.id} movie={m} />
+            ))}
+        </div>
     );
 };

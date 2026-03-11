@@ -15,5 +15,5 @@ public record MovieDTO
 
     DateTime UpdatedAt,
 
-    IReadOnlyList<GenreDTO> Genres
+    IReadOnlyList<GenreDTO>? Genres
 );
