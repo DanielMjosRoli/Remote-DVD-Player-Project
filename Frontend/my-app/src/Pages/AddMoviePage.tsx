@@ -58,8 +58,7 @@ export function AddMoviePage() {
 
         try {
             const createdMovie = await addMovie(payload);
-
-            // redirect to movie page
+            
             navigate(`/movies/${createdMovie.id}`);
 
         } catch (err) {

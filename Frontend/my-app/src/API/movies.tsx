@@ -35,3 +35,23 @@ export async function getGenres(): Promise<GenreDTO[]> {
   }});
     return response.data;
 }
+
+export async function uploadMedia(
+  file: File,
+  movieId: string,
+  storageVolumeId: string
+) {
+  const formData = new FormData();
+
+  formData.append("file", file);
+  formData.append("movieId", movieId);
+  formData.append("storageVolumeId", storageVolumeId);
+
+  const res = await api.post("/movies/upload", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  return res.data;
+}

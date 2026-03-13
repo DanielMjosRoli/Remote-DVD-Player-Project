@@ -18,4 +18,35 @@ public class MediaFile
     public string? SubtitleLanguages { get; private set; }
 
     public DateTime CreatedAt { get; private set; }
+
+    private MediaFile() { }
+
+    public MediaFile(
+        Guid movieId,
+        Guid storageVolumeId,
+        string filePath,
+        long fileSizeBytes,
+        string? checksum = null,
+        string? containerFormat = null,
+        string? resolution = null,
+        string? audioFormat = null,
+        string? subtitleLanguages = null
+    )
+    {
+        Id = Guid.NewGuid();
+
+        MovieId = movieId;
+        StorageVolumeId = storageVolumeId;
+
+        FilePath = filePath;
+        FileSizeBytes = fileSizeBytes;
+
+        Checksum = checksum;
+        ContainerFormat = containerFormat;
+        Resolution = resolution;
+        AudioFormat = audioFormat;
+        SubtitleLanguages = subtitleLanguages;
+
+        CreatedAt = DateTime.UtcNow;
+    }
 }

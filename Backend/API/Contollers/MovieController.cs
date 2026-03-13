@@ -172,4 +172,42 @@ public class MoviesController : ControllerBase
 
         return Ok(ratingData);
     }
+
+    [HttpPost("upload")]
+    public async Task<ActionResult> Upload(
+        [FromForm] IFormFile file,
+        [FromForm] Guid movieId,
+        [FromForm] Guid storageVolumeId)
+    {
+        if (file.Length == 0)
+            return BadRequest("Empty file");
+
+        var storageVolume = await _context.StorageVolumes
+            .FindAsync(storageVolumeId);
+        Console.WriteLine($"MovieId: {movieId}");
+        Console.WriteLine($"StorageVolumeId: {storageVolumeId}");
+        if (storageVolume == null)
+            return NotFound("Storage volume not found");
+
+        var fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
+
+        var path = Path.Combine(storageVolume.MountPath, fileName);
+
+        await using var stream = System.IO.File.Create(path);
+        await file.CopyToAsync(stream);
+
+        var mediaFile = new MediaFile(
+            movieId,
+            storageVolumeId,
+            fileName,
+            file.Length
+        );
+
+        _context.MediaFiles.Add(mediaFile);
+
+        await _context.SaveChangesAsync();
+
+        return Ok();
+    }
+
 }

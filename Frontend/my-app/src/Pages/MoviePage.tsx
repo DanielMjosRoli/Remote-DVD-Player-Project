@@ -2,14 +2,15 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getMovieById } from "../API/movies";
 import type { MoviePageDTO } from "../Types/MoviePageDTO";
+import { UploadMovie } from "../Components/UploadMovie";
+import type { Guid } from "../Types/Guid";
 
 export function MoviePage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<{ id: Guid }>();
   const [movie, setMovie] = useState<MoviePageDTO | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function loadMovie() {
+  async function loadMovie() {
       if (!id) return;
 
       const result = await getMovieById(id);
@@ -17,6 +18,7 @@ export function MoviePage() {
       setLoading(false);
     }
 
+  useEffect(() => {
     loadMovie();
   }, [id]);
 
@@ -63,6 +65,19 @@ export function MoviePage() {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* Upload Section */}
+      <div className="mt-10">
+        <h2 className="text-2xl font-semibold mb-4">Upload Media</h2>
+
+        {id && (
+          <UploadMovie
+            movieId={id}
+            storageVolumeId={"2e078117-f17e-4d38-b2e9-30683b12c9eb"}
+            onUploadComplete={() => loadMovie()}
+          />
+        )}
       </div>
 
       {/* Media Files Section */}
