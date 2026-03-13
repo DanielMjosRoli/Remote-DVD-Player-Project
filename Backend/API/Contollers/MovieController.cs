@@ -189,8 +189,8 @@ public class MoviesController : ControllerBase
 
         var fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
 
-        var path = Path.Combine(storageVolume.MountPath, fileName);
-
+        //var path = Path.Combine(storageVolume.MountPath, fileName);
+        string path = "C:/Users/DRoli1/Remote-DVD-Player-Project/Backend/API/UploadTestFolder/" + fileName; // Temporary Test path string
         await using var stream = System.IO.File.Create(path);
         await file.CopyToAsync(stream);
 
