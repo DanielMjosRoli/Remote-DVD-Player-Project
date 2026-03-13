@@ -184,8 +184,6 @@ public class MoviesController : ControllerBase
 
         var storageVolume = await _context.StorageVolumes
             .FindAsync(storageVolumeId);
-        Console.WriteLine($"MovieId: {movieId}");
-        Console.WriteLine($"StorageVolumeId: {storageVolumeId}");
         if (storageVolume == null)
             return NotFound("Storage volume not found");
 

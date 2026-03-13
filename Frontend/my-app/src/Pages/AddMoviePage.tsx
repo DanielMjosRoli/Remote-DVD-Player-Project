@@ -58,7 +58,7 @@ export function AddMoviePage() {
 
         try {
             const createdMovie = await addMovie(payload);
-            
+
             navigate(`/movies/${createdMovie.id}`);
 
         } catch (err) {
@@ -83,7 +83,7 @@ export function AddMoviePage() {
             value={movie.title}
             onChange={handleChange}
             required
-            className="mt-1 block w-full rounded border-gray-300 shadow-sm p-2 bg-zinc-800 text-white"
+            className="mt-1 block w-full rounded border-gray-300 shadow-sm p-2 bg-zinc-900 text-white"
           />
         </div>
 
@@ -94,7 +94,7 @@ export function AddMoviePage() {
             name="originalTitle"
             value={movie.originalTitle}
             onChange={handleChange}
-            className="mt-1 block w-full rounded border-gray-300 shadow-sm p-2 bg-zinc-800 text-white"
+            className="mt-1 block w-full rounded border-gray-300 shadow-sm p-2 bg-zinc-900 text-white"
           />
         </div>
 
@@ -104,7 +104,7 @@ export function AddMoviePage() {
             name="description"
             value={movie.description}
             onChange={handleChange}
-            className="mt-1 block w-full rounded border-gray-300 shadow-sm p-2 bg-zinc-800 text-white"
+            className="mt-1 block w-full rounded border-gray-300 shadow-sm p-2 bg-zinc-900 text-white"
           />
         </div>
 
@@ -116,7 +116,7 @@ export function AddMoviePage() {
               name="releaseYear"
               value={movie.releaseYear || ""}
               onChange={handleNumberChange}
-              className="mt-1 block w-full rounded border-gray-300 shadow-sm p-2 bg-zinc-800 text-white"
+              className="mt-1 block w-full rounded border-gray-300 shadow-sm p-2 bg-zinc-900 text-white"
             />
           </div>
 
@@ -127,7 +127,7 @@ export function AddMoviePage() {
               name="durationMinutes"
               value={movie.durationMinutes || ""}
               onChange={handleNumberChange}
-              className="mt-1 block w-full rounded border-gray-300 shadow-sm p-2 bg-zinc-800 text-white"
+              className="mt-1 block w-full rounded border-gray-300 shadow-sm p-2 bg-zinc-900 text-white"
             />
           </div>
         </div>
@@ -139,7 +139,7 @@ export function AddMoviePage() {
             name="ageRating"
             value={movie.ageRating}
             onChange={handleChange}
-            className="mt-1 block w-full rounded border-gray-300 shadow-sm p-2 bg-zinc-800 text-white"
+            className="mt-1 block w-full rounded border-gray-300 shadow-sm p-2 bg-zinc-900 text-white"
           />
         </div>
 
@@ -150,7 +150,7 @@ export function AddMoviePage() {
             name="posterPath"
             value={movie.posterPath}
             onChange={handleChange}
-            className="mt-1 block w-full rounded border-gray-300 shadow-sm p-2 bg-zinc-800 text-white"
+            className="mt-1 block w-full rounded border-gray-300 shadow-sm p-2 bg-zinc-900 text-white"
           />
         </div>
 

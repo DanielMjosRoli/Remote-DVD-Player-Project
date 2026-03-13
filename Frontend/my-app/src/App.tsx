@@ -6,14 +6,16 @@ import { NavBar } from "./Components/NavBar";
 
 export function App() {
   return (
-    <Router>
-      <NavBar/>
-      <Routes>
-        <Route path="/" element={<FrontPage />} />
-        <Route path="/movies/:id" element={<MoviePage/>} />
-        <Route path="/movies/add" element={<AddMoviePage/>}/>
-      </Routes>
-    </Router>
+    <div className="min-h-screen bg-zinc-800 text-white">
+      <Router>
+        <NavBar/>
+        <Routes>
+          <Route path="/" element={<FrontPage />} />
+          <Route path="/movies/:id" element={<MoviePage/>} />
+          <Route path="/movies/add" element={<AddMoviePage/>}/>
+        </Routes>
+      </Router>
+    </div>
   );
 }
 
