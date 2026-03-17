@@ -47,7 +47,7 @@ export async function uploadMedia(
   formData.append("movieId", movieId);
   formData.append("storageVolumeId", storageVolumeId);
 
-  const res = await api.post("/movies/upload", formData, {
+  const res = await api.post(`/movies/${movieId}/upload`, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

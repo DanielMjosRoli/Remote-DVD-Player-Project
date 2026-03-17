@@ -173,32 +173,33 @@ public class MoviesController : ControllerBase
         return Ok(ratingData);
     }
 
-    [HttpPost("upload")]
-    public async Task<ActionResult> Upload(
-        [FromForm] IFormFile file,
-        [FromForm] Guid movieId,
-        [FromForm] Guid storageVolumeId)
+    [HttpPost("{movieId:guid}/upload")]
+    [RequestSizeLimit(long.MaxValue)]
+    public async Task<ActionResult> Upload([FromForm] UploadRequest request)
     {
-        if (file.Length == 0)
+        if (request.File.Length == 0)
             return BadRequest("Empty file");
 
         var storageVolume = await _context.StorageVolumes
-            .FindAsync(storageVolumeId);
+            .FindAsync(request.StorageVolumeId);
+
         if (storageVolume == null)
             return NotFound("Storage volume not found");
 
-        var fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
+        var fileName = Guid.NewGuid() + Path.GetExtension(request.File.FileName);
 
         //var path = Path.Combine(storageVolume.MountPath, fileName);
         string path = "C:/Users/DRoli1/Remote-DVD-Player-Project/Backend/API/UploadTestFolder/" + fileName; // Temporary Test path string
+        Directory.CreateDirectory(storageVolume.MountPath);
+
         await using var stream = System.IO.File.Create(path);
-        await file.CopyToAsync(stream);
+        await request.File.CopyToAsync(stream);
 
         var mediaFile = new MediaFile(
-            movieId,
-            storageVolumeId,
+            request.MovieId,
+            request.StorageVolumeId,
             fileName,
-            file.Length
+            request.File.Length
         );
 
         _context.MediaFiles.Add(mediaFile);
