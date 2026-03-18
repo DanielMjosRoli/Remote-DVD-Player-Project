@@ -32,6 +32,33 @@ int main() {
             eject_disc(&dev);
         }
 
+        else if (strncmp(command, "READ_TOC", 8) == 0) {
+
+            uint8_t buffer[32];
+
+            int len = scsi_read_toc(&dev, buffer, sizeof(buffer));
+
+            print_hex(buffer, len);
+        }
+
+        else if (strncmp(command, "GET_CONFIGURATION", 17) == 0) {
+
+            uint8_t buffer[64];
+
+            int len = scsi_get_configuration(&dev, buffer, sizeof(buffer));
+
+            print_hex(buffer, len);
+        }
+
+        else if (strncmp(command, "MODE_SENSE10", 12) == 0) {
+
+            uint8_t buffer[64];
+
+            int len = scsi_mode_sense10(&dev, buffer, sizeof(buffer));
+
+            print_hex(buffer, len);
+        }
+
         else if (strncmp(command, "TEST_UNIT_READY", 15) == 0) {
             scsi_test_unit_ready(&dev);
         }
@@ -60,6 +87,24 @@ int main() {
 
         else if (strncmp(command, "EXIT", 4) == 0) {
             break;
+        }
+
+        else if (strncmp(command, "REQUEST_SENSE", 13) == 0) {
+
+            uint8_t buffer[18];
+
+            int len = scsi_request_sense(&dev, buffer);
+
+            print_hex(buffer, len);
+        }
+
+        else if (strncmp(command, "INQUIRY", 7) == 0) {
+
+            uint8_t buffer[96];
+
+            int len = scsi_inquiry(&dev, buffer, sizeof(buffer));
+
+            print_hex(buffer, len);
         }
 
         else {
