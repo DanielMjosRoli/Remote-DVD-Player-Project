@@ -13,5 +13,6 @@ int scsi_inquiry(dvd_device *dev, uint8_t *buffer, int alloc_len);
 int scsi_mode_sense10(dvd_device *dev, uint8_t *buffer, int alloc_len);
 int scsi_read_toc(dvd_device *dev, uint8_t *buffer, int alloc_len);
 int scsi_get_configuration(dvd_device *dev, uint8_t *buffer, int alloc_len);
+int scsi_read_capacity10(dvd_device *dev, uint8_t *buffer);
 
 #endif

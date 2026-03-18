@@ -157,7 +157,7 @@ void scsi_read_capacity(dvd_device *dev) {
         return;
     }
 
-    printf("READ CAPACITY\n");
+    printf("READ CAPACITY 2\n");
     printf("Last LBA: %d\n", dev->sectors - 1);
     printf("Sector size: 2048\n\n");
 }
@@ -185,6 +185,35 @@ int scsi_read10(dvd_device *dev, int lba, int blocks, uint8_t *out_buffer) {
     }
 
     return 0;
+}
+
+int scsi_read_capacity10(dvd_device *dev, uint8_t *buffer) {
+
+    memset(buffer, 0, 8);
+
+    if (!dev->inserted) {
+        // No media → typically handled via REQUEST SENSE
+        return 0;
+    }
+
+    uint32_t total_sectors = dev->size / SECTOR_SIZE;
+
+    // VERY IMPORTANT
+    uint32_t last_lba = total_sectors - 1;
+
+    // Last LBA (big-endian)
+    buffer[0] = (last_lba >> 24) & 0xFF;
+    buffer[1] = (last_lba >> 16) & 0xFF;
+    buffer[2] = (last_lba >> 8) & 0xFF;
+    buffer[3] = last_lba & 0xFF;
+
+    // Block size = 2048 bytes
+    buffer[4] = 0x00;
+    buffer[5] = 0x00;
+    buffer[6] = 0x08;
+    buffer[7] = 0x00;
+
+    return 8;
 }
 
 int scsi_get_configuration(dvd_device *dev, uint8_t *buffer, int alloc_len) {
