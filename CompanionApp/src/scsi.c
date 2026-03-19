@@ -7,6 +7,9 @@
 #include "scsi_sense.h"
 #include <string.h>
 
+#define SCSI_STATUS_GOOD 0x00
+#define SCSI_STATUS_CHECK_CONDITION 0x02
+
 int scsi_read_toc(dvd_device *dev, uint8_t *buffer, int alloc_len) {
 
     (void)dev; // not used yet
@@ -121,6 +124,11 @@ int scsi_request_sense(dvd_device *dev, uint8_t *buffer) {
 
     buffer[12] = dev->asc;
     buffer[13] = dev->ascq;
+
+
+    dev->sense_key = 0;
+    dev->asc = 0;
+    dev->ascq = 0;
 
     return 18;
 }
@@ -256,4 +264,95 @@ int scsi_get_configuration(dvd_device *dev, uint8_t *buffer, int alloc_len) {
     buffer[11] = 0x00;
 
     return total_len;
+}
+int scsi_dispatch(dvd_device *dev,
+                  uint8_t *cdb,
+                  int cdb_len,
+                  uint8_t *buffer,
+                  int buffer_len,
+                  uint8_t *status) {
+
+    (void)cdb_len;
+    (void)buffer_len;
+
+    *status = SCSI_STATUS_GOOD;
+
+    uint8_t opcode = cdb[0];
+
+    switch (opcode) {
+
+        case 0x00: // TEST UNIT READY
+            if (!dev->inserted) {
+                set_sense(dev, 0x02, 0x3A, 0x00);
+                *status = SCSI_STATUS_CHECK_CONDITION;
+            }
+            return 0;
+
+        case 0x03: // REQUEST SENSE
+            return scsi_request_sense(dev, buffer);
+
+        case 0x12: { // INQUIRY
+            int alloc_len = cdb[4];
+            return scsi_inquiry(dev, buffer, alloc_len);
+        }
+
+        case 0x25: { // READ CAPACITY
+            if (!dev->inserted) {
+                set_sense(dev, 0x02, 0x3A, 0x00);
+                *status = SCSI_STATUS_CHECK_CONDITION;
+                return 0;
+            }
+            return scsi_read_capacity10(dev, buffer);
+        }
+
+        case 0x28: { // READ(10)
+
+            if (!dev->inserted) {
+                set_sense(dev, 0x02, 0x3A, 0x00);
+                *status = SCSI_STATUS_CHECK_CONDITION;
+                return 0;
+            }
+
+            int lba =
+                (cdb[2] << 24) |
+                (cdb[3] << 16) |
+                (cdb[4] << 8)  |
+                (cdb[5]);
+
+            int blocks =
+                (cdb[7] << 8) |
+                (cdb[8]);
+
+            // Optional: bounds check
+            int max_lba = (dev->size / 2048) - 1;
+
+            if (lba > max_lba) {
+                set_sense(dev, 0x05, 0x21, 0x00);
+                *status = SCSI_STATUS_CHECK_CONDITION;
+                return 0;
+            }
+
+            return scsi_read10(dev, lba, blocks, buffer);
+        }
+
+        case 0x5A: { // MODE SENSE (10)
+            int alloc_len = (cdb[7] << 8) | cdb[8];
+            return scsi_mode_sense10(dev, buffer, alloc_len);
+        }
+
+        case 0x43: { // READ TOC
+            int alloc_len = (cdb[7] << 8) | cdb[8];
+            return scsi_read_toc(dev, buffer, alloc_len);
+        }
+
+        case 0x46: { // GET CONFIGURATION
+            int alloc_len = (cdb[7] << 8) | cdb[8];
+            return scsi_get_configuration(dev, buffer, alloc_len);
+        }
+
+        default:
+            set_sense(dev, 0x05, 0x20, 0x00); // illegal request
+            *status = SCSI_STATUS_CHECK_CONDITION;
+            return 0;
+    }
 }

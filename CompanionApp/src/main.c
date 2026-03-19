@@ -290,6 +290,46 @@ int main() {
             break;
         }
 
+        else if (strncmp(command, "CDB ", 4) == 0) {
+
+            uint8_t cdb[16] = {0};
+            int cdb_len = 0;
+
+            char *ptr = command + 4;
+            
+            // Parse hex bytes
+            while (*ptr && cdb_len < 16) {
+
+                unsigned int byte;
+
+                if (sscanf(ptr, "%2x", &byte) != 1)
+                    break;
+
+                cdb[cdb_len++] = (uint8_t)byte;
+
+                // Move to next byte
+                while (*ptr && *ptr != ' ') ptr++;
+                while (*ptr == ' ') ptr++;
+            }
+
+            if (cdb_len == 0) {
+                printf("Invalid CDB input\n");
+                continue;
+            }
+
+            uint8_t buffer[4096];
+
+            uint8_t status;
+
+            int len = scsi_dispatch(&dev, cdb, cdb_len, buffer, sizeof(buffer), &status);
+
+            printf("Status: 0x%02X\n", status);
+
+            if (len > 0) {
+                print_hex(buffer, len > 64 ? 64 : len);
+            }
+        }
+
         else {
             printf("Unknown command\n\n");
         }
