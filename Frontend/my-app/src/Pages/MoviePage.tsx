@@ -94,9 +94,6 @@ export function MoviePage() {
               key={file.id}
               className="bg-zinc-900 border border-zinc-800 rounded-lg p-4"
             >
-              <p>{String(file.id === currentMediaId)}</p>
-              <p>{file.id}</p>
-              <p>{currentMediaId}</p>
               <p className="font-medium">{file.filePath}</p>
               <PlayButton
                 mediaFileId={file.id}
