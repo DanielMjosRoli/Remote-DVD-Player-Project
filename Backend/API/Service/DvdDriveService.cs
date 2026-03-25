@@ -23,7 +23,6 @@ public class DvdDriveService : IDvdDriveService
 
         if (media == null)
             throw new Exception("Media not found");
-        Console.WriteLine(media);
         _currentMediaFileId = mediaFileId;
 
         var fullPath = Path.Combine(
