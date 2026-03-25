@@ -94,11 +94,14 @@ export function MoviePage() {
               key={file.id}
               className="bg-zinc-900 border border-zinc-800 rounded-lg p-4"
             >
+              <p>{String(file.id === currentMediaId)}</p>
+              <p>{file.id}</p>
+              <p>{currentMediaId}</p>
               <p className="font-medium">{file.filePath}</p>
               <PlayButton
                 mediaFileId={file.id}
                 isPlaying={currentMediaId === file.id}
-                onPlay={currentMediaId === file.id ? () => {} : play}
+                onPlay={play}
               />
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm text-zinc-400 mt-2">
                 <p><b>Container:</b> {file.containerFormat}</p>

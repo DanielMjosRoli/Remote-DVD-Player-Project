@@ -19,7 +19,6 @@ export function DriveProvider({ children }: { children: React.ReactNode }) {
 
   async function refresh() {
     const data = await getDriveStatus();
-    console.log(data)
 
     setCurrentMediaId(data.id);
     setMovieTitle(data.title);

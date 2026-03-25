@@ -18,7 +18,6 @@ public class DriveController : ControllerBase
     public async Task<IActionResult> Play(Guid mediaFileId)
     {
         await _dvdDrive.LoadMediaAsync(mediaFileId);
-        Console.WriteLine(mediaFileId);
         return Ok();
     }
 
@@ -42,11 +41,10 @@ public class DriveController : ControllerBase
                 posterPath = (string?)null
             });
         }
-        Console.WriteLine("Success");
         var media = await _context.MediaFiles
             .Where(mf => mf.Id == mediaId)
             .Select(mf => new CurrentMovieDTO(
-                mf.Movie.Id,
+                mf.Id,
                 mf.Movie.Title,
                 mf.Movie.PosterPath
             ))
