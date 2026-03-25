@@ -4,8 +4,12 @@ import { getMovieById } from "../API/movies";
 import type { MoviePageDTO } from "../Types/MoviePageDTO";
 import { UploadMovie } from "../Components/UploadMovie";
 import type { Guid } from "../Types/Guid";
+import { PlayButton } from "../Components/PlayButton";
+import { useDrive } from "../API/DriveContext";
+import { EjectButton } from "../Components/EjectButton";
 
 export function MoviePage() {
+  const { currentMediaId, play } = useDrive();
   const { id } = useParams<{ id: Guid }>();
   const [movie, setMovie] = useState<MoviePageDTO | null>(null);
   const [loading, setLoading] = useState(true);
@@ -24,7 +28,7 @@ export function MoviePage() {
 
   if (loading) return <p className="p-6 text-white">Loading...</p>;
   if (!movie) return <p className="p-6 text-white">Movie not found</p>;
-
+  
   return (
     <div className="max-w-6xl mx-auto p-6 text-white">
       {/* Top Section */}
@@ -91,7 +95,11 @@ export function MoviePage() {
               className="bg-zinc-900 border border-zinc-800 rounded-lg p-4"
             >
               <p className="font-medium">{file.filePath}</p>
-
+              <PlayButton
+                mediaFileId={file.id}
+                isPlaying={currentMediaId === file.id}
+                onPlay={currentMediaId === file.id ? () => {} : play}
+              />
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm text-zinc-400 mt-2">
                 <p><b>Container:</b> {file.containerFormat}</p>
                 <p><b>Resolution:</b> {file.resolution}</p>
