@@ -13,7 +13,8 @@ export function MoviePage() {
   const { id } = useParams<{ id: Guid }>();
   const [movie, setMovie] = useState<MoviePageDTO | null>(null);
   const [loading, setLoading] = useState(true);
-
+  const [showPopup, setShowPopup] = useState(false);
+  const isSomethingPlaying = currentMediaId !== null;
   async function loadMovie() {
       if (!id) return;
 
@@ -98,7 +99,14 @@ export function MoviePage() {
               <PlayButton
                 mediaFileId={file.id}
                 isPlaying={currentMediaId === file.id}
-                onPlay={play}
+                isDisabled = {isSomethingPlaying}
+                onPlay={(id) => {
+                  if (isSomethingPlaying && currentMediaId === file.id) {
+                    setShowPopup(true);
+                    return;
+                  }
+                  play(id);
+                }}
               />
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm text-zinc-400 mt-2">
                 <p><b>Container:</b> {file.containerFormat}</p>

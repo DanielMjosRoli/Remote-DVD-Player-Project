@@ -20,9 +20,9 @@ export function DriveProvider({ children }: { children: React.ReactNode }) {
   async function refresh() {
     const data = await getDriveStatus();
 
-    setCurrentMediaId(data.id);
-    setMovieTitle(data.title);
-    setPosterPath(data.posterPath);
+    setCurrentMediaId(data.id ?? null);
+    setMovieTitle(data.title ?? null);
+    setPosterPath(data.posterPath ?? null);
   }
 
   async function play(id: string) {
