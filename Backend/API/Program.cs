@@ -11,6 +11,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddSingleton<IDvdDriveService, DvdDriveService>();
 
+builder.Services.AddSingleton<IDvdHardwareController, ScstHardwareController>();
+
 // Add Swagger services
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
