@@ -3,18 +3,26 @@ import type { MovieDTO } from "../Types/movieDTO";
 import type { PagedResult } from "../Types/pagedResult";
 import { getMovies } from "../API/movies";
 import { Card } from "../Components/Card";
+import { useLocation } from "react-router-dom";
 
 export function FrontPage() {
     const [movies, setMovies] = useState<MovieDTO[]>([]); 
+    const location = useLocation();
 
     useEffect(() => {
-    async function loadMovies(page: number) {
-        const result: PagedResult<MovieDTO> = await getMovies(page);
-        setMovies(result.items);
-    }
+        const params = new URLSearchParams(location.search);
 
-    loadMovies(1);
-    }, []);
+        const query = params.get("query") || "";
+        const genre = params.get("genre") || "";
+        
+        async function loadMovies(page: number) {
+            const result: PagedResult<MovieDTO> = await getMovies(page, query, genre);
+            setMovies(result.items);
+        }
+
+        loadMovies(1);
+    }, [location.search]);
+
     return(
         <div className="p-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
             {movies.map((m) => (

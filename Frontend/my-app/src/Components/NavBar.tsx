@@ -1,13 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 export function NavBar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const navigate = useNavigate();
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    console.log(search);
+    navigate(`/?query=${encodeURIComponent(search)}`);
   }
 
   return (

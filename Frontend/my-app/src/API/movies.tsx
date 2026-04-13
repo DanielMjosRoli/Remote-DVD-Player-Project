@@ -9,8 +9,22 @@ const api = axios.create({
   validateStatus: (status) => status < 500
 });
 
-export async function getMovies(page: number): Promise<PagedResult<MovieDTO>> {
-    const response = await api.get<PagedResult<MovieDTO>>(`/movies?page=${page}`);
+export async function getMovies(
+  page: number,
+  query?: string,
+  genre?: string
+): Promise<PagedResult<MovieDTO>> {
+    let url = `/movies?page=${page}`;
+
+    if (query && query.trim() !== "") {
+        url += `&query=${encodeURIComponent(query)}`;
+    }
+
+    if (genre && genre.trim() !== "") {
+        url += `&genre=${encodeURIComponent(genre)}`;
+    }
+
+    const response = await api.get<PagedResult<MovieDTO>>(url);
     return response.data;
 }
 

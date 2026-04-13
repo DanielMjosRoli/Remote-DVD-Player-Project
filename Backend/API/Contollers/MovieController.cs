@@ -15,17 +15,41 @@ public class MoviesController : ControllerBase
 
     [HttpGet]
     public async Task<ActionResult<PagedResult<MovieDTO>>> GetAll(
+        [FromQuery] string? query,
+        [FromQuery] string? genre,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20)
     {
         pageSize = Math.Min(pageSize, 100);
 
-        var query = _context.Movies.AsNoTracking();
+        var moviesQuery = _context.Movies
+            .AsNoTracking()
+            .AsQueryable();
 
-        var totalCount = await query.CountAsync();
+        if (!string.IsNullOrWhiteSpace(query))
+        {
+            moviesQuery = moviesQuery.Where(m =>
+                EF.Functions.ILike(m.Title, $"%{query}%") ||
+                EF.Functions.ILike(m.OriginalTitle, $"%{query}%"))
+                .OrderBy(m => m.Title.StartsWith(query) ? 0 : 1)
+                .ThenBy(m => m.Title);
+        }
+        else
+        {
+            moviesQuery = moviesQuery.OrderBy(m => m.Title);
+        }
 
-        var items = await query
-            .OrderBy(m => m.Title)
+        if (!string.IsNullOrWhiteSpace(genre))
+        {
+            moviesQuery = moviesQuery.Where(m =>
+                m.Genres.Any(g => g.Genre.Name == genre));
+        }
+
+        var totalCount = await moviesQuery.CountAsync();
+
+        moviesQuery = moviesQuery.OrderBy(m => m.Title);
+
+        var items = await moviesQuery
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .Select(m => new MovieDTO(
@@ -208,5 +232,4 @@ public class MoviesController : ControllerBase
 
         return Ok();
     }
-
 }
