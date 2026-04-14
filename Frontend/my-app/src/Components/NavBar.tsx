@@ -1,15 +1,32 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getGenres } from "../API/movies";
+import type { GenreDTO } from "../Types/genreDTO";
 
 export function NavBar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [genre, setGenre] = useState("");
+  const [genres, setGenres] = useState<GenreDTO[]>([]);
   const navigate = useNavigate();
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    navigate(`/?query=${encodeURIComponent(search)}`);
+    const params = new URLSearchParams();
+    if (search) params.set("query", search);
+    if (genre) params.set("genre", genre);
+
+    navigate(`/?${params.toString()}`);
   }
+
+    useEffect(() => {
+    async function loadGenres() {
+      const data = await getGenres();
+      setGenres(data);
+    }
+
+    loadGenres();
+  }, []);
 
   return (
     <nav className="bg-gray-900 text-white shadow sticky top-0 z-50">
@@ -38,7 +55,19 @@ export function NavBar() {
               onChange={(e) => setSearch(e.target.value)}
               className="px-2 py-1 rounded bg-gray-800 border border-gray-700"
             />
-
+            {/* 🎭 Genre dropdown */}
+            <select
+              value={genre}
+              onChange={(e) => setGenre(e.target.value)}
+              className="px-2 py-1 rounded bg-gray-800 border border-gray-700"
+            >
+              <option value="">All Genres</option>
+              {genres.map((g) => (
+                <option key={g.id} value={g.name}>
+                  {g.name}
+                </option>
+              ))}
+            </select>
             <button className="bg-indigo-600 px-3 py-1 rounded hover:bg-indigo-700">
               Search
             </button>
@@ -74,7 +103,7 @@ export function NavBar() {
             Add Movie
           </Link>
 
-          <form onSubmit={handleSearch} className="flex gap-2">
+          <form onSubmit={handleSearch} className="flex flex-col gap-3">
             <input
               type="text"
               placeholder="Search..."
@@ -82,7 +111,19 @@ export function NavBar() {
               onChange={(e) => setSearch(e.target.value)}
               className="flex-1 px-2 py-1 rounded bg-gray-700 border border-gray-600"
             />
-
+            {/* 🎭 Genre dropdown */}
+            <select
+              value={genre}
+              onChange={(e) => setGenre(e.target.value)}
+              className="px-2 py-1 rounded bg-gray-800 border border-gray-700"
+            >
+              <option value="">All Genres</option>
+              {genres.map((g) => (
+                <option key={g.id} value={g.name}>
+                  {g.name}
+                </option>
+              ))}
+            </select>
             <button className="bg-indigo-600 px-3 py-1 rounded">
               Go
             </button>
