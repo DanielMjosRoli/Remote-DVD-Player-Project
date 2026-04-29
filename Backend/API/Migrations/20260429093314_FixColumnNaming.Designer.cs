@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace API.Migrations
 {
     [DbContext(typeof(MediaDBContext))]
-    [Migration("20260303094627_AddCollectionConfiguration")]
-    partial class AddCollectionConfiguration
+    [Migration("20260429093314_FixColumnNaming")]
+    partial class FixColumnNaming
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,7 +42,7 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("collection", (string)null);
+                    b.ToTable("collections", (string)null);
                 });
 
             modelBuilder.Entity("CollectionMovie", b =>
@@ -213,6 +213,32 @@ namespace API.Migrations
                     b.ToTable("movie_genres", (string)null);
                 });
 
+            modelBuilder.Entity("Profile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Avatar")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsKids")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Profile");
+                });
+
             modelBuilder.Entity("Rating", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -243,32 +269,39 @@ namespace API.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<long?>("AvailableBytes")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("available_bytes");
 
                     b.Property<long?>("CapacityBytes")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("capacity_bytes");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("MountPath")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("mount_path");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("name");
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("type");
 
                     b.HasKey("Id");
 
-                    b.ToTable("StorageVolumes");
+                    b.ToTable("storage_volumes", (string)null);
                 });
 
             modelBuilder.Entity("User", b =>
@@ -398,6 +431,17 @@ namespace API.Migrations
                     b.Navigation("Movie");
                 });
 
+            modelBuilder.Entity("Profile", b =>
+                {
+                    b.HasOne("User", "User")
+                        .WithMany("Profiles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Rating", b =>
                 {
                     b.HasOne("Movie", "Movie")
@@ -464,6 +508,8 @@ namespace API.Migrations
 
             modelBuilder.Entity("User", b =>
                 {
+                    b.Navigation("Profiles");
+
                     b.Navigation("Ratings");
 
                     b.Navigation("WatchHistory");
