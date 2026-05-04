@@ -9,6 +9,14 @@ const api = axios.create({
   validateStatus: (status) => status < 500
 });
 
+api.interceptors.request.use((config) => {
+  const profile = JSON.parse(localStorage.getItem("profile") || "null");
+  if (profile) {
+    config.headers["X-Profile-Id"] = profile.id;
+  }
+  return config;
+});
+
 export async function getMovies(
   page: number,
   query?: string,

@@ -9,7 +9,7 @@ public class User
     public DateTime CreatedAt { get; private set; }
     public DateTime? LastLoginAt { get; private set; }
 
-    public ICollection<Profile> Profiles { get; set; }
+    public ICollection<Profile> Profiles { get; set; } = new List<Profile>();
     
     public ICollection<WatchHistory> WatchHistory { get; private set; } = new List<WatchHistory>();
     public ICollection<Rating> Ratings { get; private set; } = new List<Rating>();

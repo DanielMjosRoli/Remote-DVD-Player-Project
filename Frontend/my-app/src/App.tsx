@@ -5,8 +5,16 @@ import { AddMoviePage } from "./Pages/AddMoviePage";
 import { NavBar } from "./Components/NavBar";
 import { DriveProvider } from "./API/DriveContext";
 import { PlayerBar } from "./Components/PlayerBar";
+import ProfileSelector from "./Components/ProfileSelector";
+import { useProfile } from "./API/ProfileContext";
 
 export function App() {
+  const { profile } = useProfile();
+
+  if (!profile) {
+    return <ProfileSelector />;
+  }
+
   return (
     <div className="min-h-screen bg-zinc-800 text-white">
       <DriveProvider>

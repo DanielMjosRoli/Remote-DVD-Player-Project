@@ -18,6 +18,8 @@ public class MediaDBContext : DbContext
     public DbSet<WatchHistory> WatchHistories => Set<WatchHistory>();
     public DbSet<Rating> Ratings => Set<Rating>();
 
+    public DbSet<Profile> Profiles { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(MediaDBContext).Assembly);
