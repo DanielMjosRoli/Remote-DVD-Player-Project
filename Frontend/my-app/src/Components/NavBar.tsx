@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getGenres } from "../API/movies";
 import type { GenreDTO } from "../Types/genreDTO";
+import ProfileSwitcher from "./ProfileSwitcher";
 
 export function NavBar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -72,6 +73,7 @@ export function NavBar() {
               Search
             </button>
           </form>
+          <ProfileSwitcher/>
         </div>
 
         {/* Mobile menu button */}
@@ -128,7 +130,7 @@ export function NavBar() {
               Go
             </button>
           </form>
-
+          <ProfileSwitcher/>
         </div>
       )}
     </nav>

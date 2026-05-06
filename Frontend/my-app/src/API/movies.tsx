@@ -3,6 +3,7 @@ import type { PagedResult } from "../Types/pagedResult";
 import type { MovieDTO } from "../Types/movieDTO";
 import type { MoviePageDTO } from "../Types/MoviePageDTO";
 import type { GenreDTO } from "../Types/genreDTO";
+import type { RatingSummary } from "../Types/RatingSummary";
 
 const api = axios.create({
   baseURL: "http://localhost:5280",
@@ -69,4 +70,10 @@ export async function uploadMedia(
   });
 
   return res.data;
+}
+
+export async function getRating(id: string): Promise<RatingSummary> {
+  const response = await api.get<RatingSummary>(`/movies/${id}/rating-summary`)
+
+  return response.data;
 }

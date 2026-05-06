@@ -7,10 +7,10 @@ public class RatingConfiguration : IEntityTypeConfiguration<Rating>
     {
         builder.ToTable("ratings");
 
-        builder.HasKey(x => new { x.UserId, x.MovieId });
+        builder.HasKey(x => new { x.ProfileId, x.MovieId });
 
-        builder.Property(x => x.UserId)
-            .HasColumnName("user_id");
+        builder.Property(x => x.ProfileId)
+            .HasColumnName("profile_id");
 
         builder.Property(x => x.MovieId)
             .HasColumnName("movie_id");
@@ -22,9 +22,9 @@ public class RatingConfiguration : IEntityTypeConfiguration<Rating>
         builder.Property(x => x.RatedAt)
             .HasColumnName("rated_at");
 
-        builder.HasOne(x => x.User)
+        builder.HasOne(x => x.Profile)
             .WithMany(x => x.Ratings)
-            .HasForeignKey(x => x.UserId)
+            .HasForeignKey(x => x.ProfileId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(x => x.Movie)

@@ -12,5 +12,4 @@ public class User
     public ICollection<Profile> Profiles { get; set; } = new List<Profile>();
     
     public ICollection<WatchHistory> WatchHistory { get; private set; } = new List<WatchHistory>();
-    public ICollection<Rating> Ratings { get; private set; } = new List<Rating>();
 }

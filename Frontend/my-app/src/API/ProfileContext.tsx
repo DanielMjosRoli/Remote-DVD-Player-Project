@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react";
 
-type Profile = {
+export type Profile = {
   id: string;
   name: string;
   avatar?: string;
