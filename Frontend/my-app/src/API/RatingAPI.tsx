@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5280/ratings",
+  baseURL: "http://localhost:5280",
   headers: {
     "Content-Type": "application/json",
   },
@@ -13,7 +13,7 @@ export async function postRating(
   movieId: string,
   ratingValue: number
 ) {
-    await api.post("/ratings", {
+    await api.post("/rating", {
     profileId,
     movieId,
     ratingValue,

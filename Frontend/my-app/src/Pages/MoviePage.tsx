@@ -7,6 +7,7 @@ import type { Guid } from "../Types/Guid";
 import { PlayButton } from "../Components/PlayButton";
 import { useDrive } from "../API/DriveContext";
 import { EjectButton } from "../Components/EjectButton";
+import Rating from "../Components/Rating";
 
 export function MoviePage() {
   const { currentMediaId, play } = useDrive();
@@ -69,6 +70,7 @@ export function MoviePage() {
               </span>
             ))}
           </div>
+          <Rating movieId={movie.id} />
         </div>
       </div>
 
