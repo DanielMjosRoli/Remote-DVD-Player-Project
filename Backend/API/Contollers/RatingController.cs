@@ -45,6 +45,6 @@ public class RatingsController : ControllerBase
         }
 
         await _context.SaveChangesAsync();
-        return Ok(dto);
+        return Ok();
     }
 }
