@@ -14,21 +14,25 @@ export default function Rating({ movieId }: Props) {
   const [rating, setRating] = useState({averageRating: 0, ratingCount: 0});
   const [hover, setHover] = useState(0);
 
-  useEffect(() => {
-    if (!profile) return;
-
+  const updateRating = () => {
     getRating(movieId)
       .then(setRating)
       .catch(() => setRating({averageRating: 0, ratingCount: 0}));
+  }
+
+  useEffect(() => {
+    if (!profile) return;
+    updateRating();
   }, [profile, movieId]);
 
   if (!profile) return null;
-
+  const currentProfile = profile;
   async function handleRate(value: number) {
     /*setRating(value);*/
 
     try {
-      await postRating(profile.id, movieId, value);
+      await postRating(currentProfile.id, movieId, value);
+      updateRating();
     } catch (err) {
       console.error(err);
     }
